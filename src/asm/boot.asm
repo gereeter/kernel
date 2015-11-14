@@ -1,9 +1,22 @@
-; The stack
 section .bss
+alignb 4096
+
+; Initial paging tables
+
+p4_table: ; Page Map Level 4 Table
+    resb 4096
+p3_table: ; Page Directory Pointer Table
+    resb 4096
+p2_table: ; Page Directory Table
+    resb 4096
+
+; The stack
+
 stack_bottom:
 ; Right now, we only need a tiny amount of stack - this should be plenty
-resb 64
+    resb 64
 stack_top:
+
 
 ; The actual code
 global start
@@ -53,6 +66,44 @@ test_for_long_mode:
     ; The 29th bit of edx indicates long mode.
     test edx, 1<<29
     jz no_long_mode
+
+setup_paging:
+    ; Set the Physical Address Extensions bit (bit 5) - we go through eax because control
+    ; registers are special and can't be directly changed.
+    mov eax, cr4
+    or eax, 1<<5
+    mov cr4, eax
+
+    ; TODO: For simplicity, we just identity map the first 2 MiB of kernel with a single
+    ; huge page. However, the internet seems unclear on how recently these huge pages were
+    ; supported and, if they are not supported, how to detect that fact. This requires
+    ; research.
+
+    ; TODO: 2 MiB may not be enough in the future. More may need to be mapped.
+
+    ; Make a P4 entry pointing at P3 (present + writeable)
+    mov dword [p4_table], p3_table+3 ; | 1<<0 | 1<<1    Constant ors don't work on addresses.
+    ; Make a P3 entry pointing at P2 (present + writeable)
+    mov dword [p3_table], p2_table+3 ; | 1<<0 | 1<<1    Constant ors don't work on addresses.
+    ; Make a P2 entry pointing at 0 (present + writeable + huge)
+    mov dword [p2_table], 1<<0 | 1<<1 | 1<<7
+
+    ; Tell the CPU about our paging tables
+    mov eax, p4_table
+    mov cr3, eax
+
+enable_compatibility_mode:
+    ; Set the long mode bit (bit 8) in the Extended Feature Enable Register, one of
+    ; the Model Specific Registers
+    mov ecx, 0xc0000080
+    rdmsr
+    or eax, 1<<8
+    wrmsr
+
+    ; Enable paging (bit 31)
+    mov eax, cr0
+    or eax, 1<<31
+    mov cr0, eax
 
 main:
     hlt
