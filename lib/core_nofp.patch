@@ -1,6 +1,6 @@
-diff -rub core_patched/clone.rs core_patched/clone.rs
---- core_patched/clone.rs	2015-11-01 10:21:11.564916540 +1100
-+++ core_patched/clone.rs	2015-11-01 10:21:02.027603292 +1100
+diff -rub core/clone.rs core/clone.rs
+--- core/clone.rs	2015-11-01 10:21:11.564916540 +1100
++++ core/clone.rs	2015-11-01 10:21:02.027603292 +1100
 @@ -80,7 +80,9 @@
  clone_impl! { u32 }
  clone_impl! { u64 }
@@ -11,9 +11,9 @@ diff -rub core_patched/clone.rs core_patched/clone.rs
  clone_impl! { f64 }
  
  clone_impl! { () }
-diff -rub core_patched/default.rs core_patched/default.rs
---- core_patched/default.rs	2015-11-01 10:21:11.564916540 +1100
-+++ core_patched/default.rs	2015-11-01 10:21:02.027603292 +1100
+diff -rub core/default.rs core/default.rs
+--- core/default.rs	2015-11-01 10:21:11.564916540 +1100
++++ core/default.rs	2015-11-01 10:21:02.027603292 +1100
 @@ -155,5 +155,7 @@
  default_impl! { i32, 0 }
  default_impl! { i64, 0 }
@@ -22,10 +22,10 @@ diff -rub core_patched/default.rs core_patched/default.rs
  default_impl! { f32, 0.0f32 }
 +#[cfg(not(feature = "disable_float"))]
  default_impl! { f64, 0.0f64 }
-Only in core_patched/: default.rs.orig
-diff -rub core_patched/fmt/mod.rs core_patched/fmt/mod.rs
---- core_patched/fmt/mod.rs	2015-11-01 10:21:11.568918771 +1100
-+++ core_patched/fmt/mod.rs	2015-11-01 10:21:02.027603292 +1100
+Only in core/: default.rs.orig
+diff -rub core/fmt/mod.rs core/fmt/mod.rs
+--- core/fmt/mod.rs	2015-11-01 10:21:11.568918771 +1100
++++ core/fmt/mod.rs	2015-11-01 10:21:02.027603292 +1100
 @@ -17,6 +17,7 @@
  use cell::{Cell, RefCell, Ref, RefMut, BorrowState};
  use marker::PhantomData;
@@ -76,10 +76,10 @@ diff -rub core_patched/fmt/mod.rs core_patched/fmt/mod.rs
  floating! { f64 }
  
  // Implementation of Display/Debug for various core types
-Only in core_patched/fmt: mod.rs.orig
-diff -rub core_patched/intrinsics.rs core_patched/intrinsics.rs
---- core_patched/intrinsics.rs	2015-11-01 10:21:11.564916540 +1100
-+++ core_patched/intrinsics.rs	2015-11-01 10:21:02.027603292 +1100
+Only in core/fmt: mod.rs.orig
+diff -rub core/intrinsics.rs core/intrinsics.rs
+--- core/intrinsics.rs	2015-11-01 10:21:11.564916540 +1100
++++ core/intrinsics.rs	2015-11-01 10:21:02.027603292 +1100
 @@ -412,7 +412,10 @@
      pub fn volatile_load<T>(src: *const T) -> T;
      /// Perform a volatile store to the `dst` pointer.
@@ -101,10 +101,10 @@ diff -rub core_patched/intrinsics.rs core_patched/intrinsics.rs
      /// Returns the number of bits set in a `u8`.
      pub fn ctpop8(x: u8) -> u8;
      /// Returns the number of bits set in a `u16`.
-Only in core_patched/: intrinsics.rs.orig
-diff -rub core_patched/lib.rs core_patched/lib.rs
---- core_patched/lib.rs	2015-11-01 10:21:11.568918771 +1100
-+++ core_patched/lib.rs	2015-11-01 10:21:02.027603292 +1100
+Only in core/: intrinsics.rs.orig
+diff -rub core/lib.rs core/lib.rs
+--- core/lib.rs	2015-11-01 10:21:11.568918771 +1100
++++ core/lib.rs	2015-11-01 10:21:02.027603292 +1100
 @@ -115,7 +115,9 @@
  #[path = "num/u32.rs"]  pub mod u32;
  #[path = "num/u64.rs"]  pub mod u64;
@@ -123,9 +123,9 @@ diff -rub core_patched/lib.rs core_patched/lib.rs
  pub mod simd;
  
  pub mod slice;
-diff -rub core_patched/num/flt2dec/decoder.rs core_patched/num/flt2dec/decoder.rs
---- core_patched/num/flt2dec/decoder.rs	2015-11-01 10:21:11.568918771 +1100
-+++ core_patched/num/flt2dec/decoder.rs	2015-11-01 10:21:02.027603292 +1100
+diff -rub core/num/flt2dec/decoder.rs core/num/flt2dec/decoder.rs
+--- core/num/flt2dec/decoder.rs	2015-11-01 10:21:11.568918771 +1100
++++ core/num/flt2dec/decoder.rs	2015-11-01 10:21:02.027603292 +1100
 @@ -12,6 +12,7 @@
  
  use prelude::v1::*;
@@ -147,9 +147,9 @@ diff -rub core_patched/num/flt2dec/decoder.rs core_patched/num/flt2dec/decoder.r
  impl DecodableFloat for f64 {
      fn min_pos_norm_value() -> Self { f64::MIN_POSITIVE }
  }
-diff -rub core_patched/num/mod.rs core_patched/num/mod.rs
---- core_patched/num/mod.rs	2015-11-01 10:21:11.572921002 +1100
-+++ core_patched/num/mod.rs	2015-11-01 10:21:02.027603292 +1100
+diff -rub core/num/mod.rs core/num/mod.rs
+--- core/num/mod.rs	2015-11-01 10:21:11.572921002 +1100
++++ core/num/mod.rs	2015-11-01 10:21:02.027603292 +1100
 @@ -46,7 +46,9 @@
  pub mod wrapping;
  
@@ -198,10 +198,10 @@ diff -rub core_patched/num/mod.rs core_patched/num/mod.rs
  // Float -> Float
  impl_from! { f32, f64 }
 +}
-Only in core_patched/num: mod.rs.orig
-diff -rub core_patched/ops.rs core_patched/ops.rs
---- core_patched/ops.rs	2015-11-01 10:21:11.568918771 +1100
-+++ core_patched/ops.rs	2015-11-01 10:21:02.031605519 +1100
+Only in core/num: mod.rs.orig
+diff -rub core/ops.rs core/ops.rs
+--- core/ops.rs	2015-11-01 10:21:11.568918771 +1100
++++ core/ops.rs	2015-11-01 10:21:02.031605519 +1100
 @@ -203,7 +203,9 @@
      )*)
  }
