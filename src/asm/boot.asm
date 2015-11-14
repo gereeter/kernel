@@ -15,6 +15,8 @@ p2_table: ; Page Directory Table
 
 ; The stack
 
+alignb 16
+
 stack_bottom:
 ; Right now, we only need a tiny amount of stack - this should be plenty
     resb 64

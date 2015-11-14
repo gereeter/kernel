@@ -20,8 +20,8 @@ bin/kernel.bin: bin/folder_creation_hack bin/boot.o bin/boot64.o bin/multiboot.o
 bin/boot.o: src/asm/boot.asm
 	nasm -f elf64 -o $@ $<
 
-bin/boot64.o: src/asm/boot64.asm
-	nasm -f elf64 -o $@ $<
+bin/boot64.o: src/rust/main.rs
+	rustc --crate-type staticlib --target x86_64-unknown-linux-gnu -C no-redzone -C target-feature=-mmx,-sse,-sse2,-sse3,-ssse3,-sse4.1,-sse4.2,-3dnow,-3dnowa,-avx,-avx2 -o $@ $<
 
 bin/multiboot.o: src/asm/multiboot.asm
 	nasm -f elf64 -o $@ $<
