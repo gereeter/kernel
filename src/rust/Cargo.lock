@@ -3,9 +3,17 @@ name = "kernel"
 version = "0.1.0"
 dependencies = [
  "core 0.1.0",
+ "rlibc 0.1.4",
 ]
 
 [[package]]
 name = "core"
 version = "0.1.0"
+
+[[package]]
+name = "rlibc"
+version = "0.1.4"
+dependencies = [
+ "core 0.1.0",
+]
 

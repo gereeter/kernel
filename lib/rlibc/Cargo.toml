@@ -1,0 +1,6 @@
+[package]
+name = "rlibc"
+version = "0.1.4"
+
+[dependencies.core]
+path = "../core"

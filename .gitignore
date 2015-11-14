@@ -1,3 +1,5 @@
 bin/
 lib/patched/
+lib/core/target/
+lib/rlibc/target/
 src/rust/target/

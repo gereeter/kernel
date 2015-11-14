@@ -6,6 +6,8 @@ run: bin/kernel.bin32
 clean:
 	rm -rf bin/
 	rm -rf lib/patched
+	rm -rf lib/core/target
+	rm -rf lib/rlibc/target
 	rm -rf src/rust/target
 
 bin/:

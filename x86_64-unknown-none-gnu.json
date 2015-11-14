@@ -11,5 +11,6 @@
     "disable-redzone": true,
     "linker-is-gnu": true,
     "no-compiler-rt": true,
-    "archive-format": "gnu"
+    "archive-format": "gnu",
+    "custom-unwind-resume": true
 }

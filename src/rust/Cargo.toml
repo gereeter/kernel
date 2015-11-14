@@ -9,3 +9,6 @@ crate-type = ["staticlib"]
 [dependencies.core]
 path = "../../lib/core"
 features = ["disable_float"]
+
+[dependencies.rlibc]
+path = "../../lib/rlibc"
