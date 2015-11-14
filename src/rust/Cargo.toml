@@ -1,0 +1,11 @@
+[package]
+name = "kernel"
+version = "0.1.0"
+authors = ["Jonathan S <gereeter+code@gmail.com>"]
+
+[lib]
+crate-type = ["staticlib"]
+
+[dependencies.core]
+path = "../../lib/core"
+features = ["disable_float"]
