@@ -1,3 +1,6 @@
+global start
+extern start64
+
 section .bss
 alignb 4096
 
@@ -18,11 +21,33 @@ stack_bottom:
 stack_top:
 
 
-; The actual code
-global start
+section .rodata
+alignb 8
+
+; An initial 64 bit Global Descriptor Table
+
+gdt:
+    ; All GDTs must start with a null entry
+    dq 0
+.code_offset: equ $-gdt
+    ; The code segment (readable + executable + is a data or code segment + present + is a 64-bit code segment)
+    dq 1<<41 | 1<<43 | 1<<44 | 1<<47 | 1<<53
+.data_offset: equ $-gdt
+    ; The data segment (writeable + is a data or code segment + present)
+    dq 1<<41 | 1<<44 | 1<<47
+.pointer:
+    ; To refer to the GDT, the CPU uses a ten byte pointer structure. The
+    ; first two bytes give the length of the GDT in bytes, minus one, and
+    ; the next eight bytes give the location of the GDT
+    dw $-gdt-1
+    dq gdt
+
 
 section .text
 bits 32
+
+; The actual code
+
 start:
     ; The sanity checks ahead need some stack
     mov esp, stack_top
@@ -105,8 +130,19 @@ enable_compatibility_mode:
     or eax, 1<<31
     mov cr0, eax
 
-main:
-    hlt
+enable_long_mode:
+    ; Tell the CPU where our 64 bit GDT is
+    lgdt [gdt.pointer]
+
+    ; Point all the data-like segments at our new GDT's data segment - we go through ax because,
+    ; like control registers, segment registers can't be set to constants.
+    mov ax, gdt.data_offset
+    mov ss, ax
+    mov ds, ax
+    mov es, ax
+
+    ; Do a far jump into 64-bit code
+    jmp gdt.code_offset:start64
 
 ; Error cases
 no_cpuid:
