@@ -8,7 +8,7 @@ use core::intrinsics;
 
 fn halt() -> ! {
     unsafe {
-        asm!("hlt");
+        asm!("hlt"::::"volatile");
         intrinsics::unreachable();
     }
 }
