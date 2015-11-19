@@ -34,13 +34,13 @@ bin/multiboot.o: src/asm/multiboot.asm bin/.dir_created
 bin/boot64.a: src/rust/target/x86_64-unknown-none-gnu/debug/libkernel.a bin/.dir_created
 	cp $< $@
 
-src/rust/target/x86_64-unknown-none-gnu/debug/libkernel.a: src/rust/src/kernel.rs lib/patched/core.done
+src/rust/target/x86_64-unknown-none-gnu/debug/libkernel.a: src/rust/src/kernel.rs lib/patched/core/.patch_applied
 	cargo build --target x86_64-unknown-none-gnu --manifest-path src/rust/Cargo.toml
 
 lib/patched/core/.dir_created: lib/patched/.dir_created
 	cp -r submodules/rust/src/libcore/ lib/patched/core
 	touch $@
 
-lib/patched/core.done: lib/patched/core/.dir_created lib/core_nofp.patch
+lib/patched/core/.patch_applied: lib/patched/core/.dir_created lib/core_nofp.patch
 	patch -d lib/patched/ -p0 < lib/core_nofp.patch
 	touch $@
