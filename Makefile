@@ -23,7 +23,7 @@ bin/kernel.bin32: bin/kernel.bin
 	objcopy -I elf64-x86-64 -O elf32-i386 $< $@
 
 bin/kernel.bin: bin/.dir_created bin/boot.o bin/boot64.a bin/multiboot.o src/ld/kernel.ld
-	ld -n -m elf_x86_64 -o $@ -T src/ld/kernel.ld bin/boot.o bin/boot64.a bin/multiboot.o
+	ld -n --gc-sections -m elf_x86_64 -o $@ -T src/ld/kernel.ld bin/boot.o bin/boot64.a bin/multiboot.o
 
 bin/boot.o: src/asm/boot.asm bin/.dir_created
 	nasm -f elf64 -o $@ $<
