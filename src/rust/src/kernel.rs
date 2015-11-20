@@ -6,6 +6,7 @@ extern crate rlibc;
 
 use core::intrinsics;
 
+#[inline(always)]
 fn halt() -> ! {
     unsafe {
         asm!("hlt"::::"volatile");
