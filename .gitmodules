@@ -4,3 +4,6 @@
 [submodule "submodules/rlibc"]
 	path = submodules/rlibc
 	url = https://github.com/rust-lang/rlibc
+[submodule "submodules/typenum"]
+	path = submodules/typenum
+	url = https://github.com/gereeter/typenum

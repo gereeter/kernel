@@ -34,7 +34,7 @@ bin/multiboot.o: src/asm/multiboot.asm bin/.dir_created
 bin/boot64.a: src/rust/target/x86_64-unknown-none-gnu/debug/libkernel.a bin/.dir_created
 	cp $< $@
 
-src/rust/target/x86_64-unknown-none-gnu/debug/libkernel.a: src/rust/src/kernel.rs lib/patched/core/.patch_applied
+src/rust/target/x86_64-unknown-none-gnu/debug/libkernel.a: src/rust/src/kernel.rs src/rust/src/port.rs lib/patched/core/.patch_applied
 	cargo build --target x86_64-unknown-none-gnu --manifest-path src/rust/Cargo.toml
 
 lib/patched/core/.dir_created: lib/patched/.dir_created

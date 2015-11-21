@@ -12,3 +12,7 @@ features = ["disable_float"]
 
 [dependencies.rlibc]
 path = "../../lib/rlibc"
+
+[dependencies.typenum]
+path = "../../lib/typenum"
+features = ["no_std"]
