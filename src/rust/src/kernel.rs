@@ -10,10 +10,9 @@ mod port;
 use core::intrinsics;
 
 #[inline(always)]
-fn halt() -> ! {
+fn halt() {
     unsafe {
         asm!("hlt"::::"volatile");
-        intrinsics::unreachable();
     }
 }
 
@@ -29,7 +28,7 @@ fn write_str(message: &[u8], color: u8) {
 #[no_mangle]
 pub extern "C" fn start64() -> ! {
     write_str(b"Hello, world!", 0x0b);
-    halt()
+    loop { halt() }
 }
 
 
@@ -38,10 +37,10 @@ fn eh_personality() { }
 
 #[lang = "eh_unwind_resume"]
 fn eh_unwind_resume() -> ! {
-    halt()
+    loop { halt() }
 }
 
 #[lang = "panic_fmt"]
 fn panic_fmt() -> ! {
-    halt()
+    loop { halt() }
 }
