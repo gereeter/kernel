@@ -15,7 +15,7 @@ fn halt() -> ! {
 }
 
 fn write_str(message: &[u8], color: u8) {
-    let mut screen = 0xb8000 as *mut u16;
+    let screen = 0xb8000 as *mut u16;
     for (index, &char) in message.iter().enumerate() {
         unsafe {
             *screen.offset(index as isize) = (color as u16) << 8 | char as u16;
