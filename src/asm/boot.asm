@@ -1,5 +1,6 @@
 global start
 extern start64
+extern gdt_pointer
 
 section .bss
 alignb 4096
@@ -21,28 +22,6 @@ stack_bottom:
 ; Right now, we only need a tiny amount of stack - this should be plenty
     resb 64
 stack_top:
-
-
-section .rodata
-alignb 8
-
-; An initial 64 bit Global Descriptor Table
-
-gdt:
-    ; All GDTs must start with a null entry
-    dq 0
-.code_offset: equ $-gdt
-    ; The code segment (readable + executable + is a data or code segment + present + is a 64-bit code segment)
-    dq 1<<41 | 1<<43 | 1<<44 | 1<<47 | 1<<53
-.data_offset: equ $-gdt
-    ; The data segment (writeable + is a data or code segment + present)
-    dq 1<<41 | 1<<44 | 1<<47
-.pointer:
-    ; To refer to the GDT, the CPU uses a ten byte pointer structure. The
-    ; first two bytes give the length of the GDT in bytes, minus one, and
-    ; the next eight bytes give the location of the GDT
-    dw $-gdt-1
-    dq gdt
 
 
 section .text
@@ -134,17 +113,19 @@ enable_compatibility_mode:
 
 enable_long_mode:
     ; Tell the CPU where our 64 bit GDT is
-    lgdt [gdt.pointer]
+    lgdt [gdt_pointer]
 
     ; Point all the data-like segments at our new GDT's data segment - we go through ax because,
     ; like control registers, segment registers can't be set to constants.
-    mov ax, gdt.data_offset
+    ; 16 is the offset of the data segment - see src/rust/src/gdt.rs
+    mov ax, 16
     mov ss, ax
     mov ds, ax
     mov es, ax
 
     ; Do a far jump into 64-bit code
-    jmp gdt.code_offset:start64
+    ; 8 is the offset of the code segment - see src/rust/src/gdt.rs
+    jmp 8:start64
 
 ; Error cases
 no_cpuid:

@@ -1,4 +1,4 @@
-#![feature(asm, core_intrinsics, core_slice_ext, lang_items, no_std)]
+#![feature(asm, core_slice_ext, lang_items, no_std)]
 
 #![no_std]
 
@@ -6,8 +6,7 @@ extern crate rlibc;
 extern crate typenum;
 
 mod port;
-
-use core::intrinsics;
+pub mod gdt;
 
 #[inline(always)]
 fn halt() {
