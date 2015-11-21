@@ -6,6 +6,7 @@ extern crate rlibc;
 extern crate typenum;
 
 mod port;
+mod pic;
 pub mod gdt;
 
 #[inline(always)]
@@ -27,6 +28,9 @@ fn write_str(message: &[u8], color: u8) {
 #[no_mangle]
 pub extern "C" fn start64() -> ! {
     write_str(b"Hello, world!", 0x0b);
+    unsafe {
+        pic::ChainedPics::get().remap(32);
+    }
     loop { halt() }
 }
 
