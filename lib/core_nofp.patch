@@ -180,10 +180,10 @@ diff -rub core/num/mod.rs core/num/mod.rs
      }
  }
  
+ #[stable(feature = "rust1", since = "1.0.0")]
 +#[cfg(not(feature = "disable_float"))]
  pub use num::dec2flt::ParseFloatError;
  
- // Conversion traits for primitive integer and float types
 @@ -1519,6 +1524,8 @@
  // they fit in the significand, which is 24 bits in f32 and 53 bits in f64.
  // Lossy float conversions are not implemented at this time.
