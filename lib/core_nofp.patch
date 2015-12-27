@@ -33,7 +33,7 @@ diff -rub core/fmt/mod.rs core/fmt/mod.rs
  use num::flt2dec;
  use ops::Deref;
  use result;
-@@ -1013,6 +1014,7 @@
+@@ -1008,6 +1009,7 @@
      /// Takes the formatted parts and applies the padding.
      /// Assumes that the caller already has rendered the parts with required precision,
      /// so that `self.precision` can be ignored.
@@ -41,7 +41,7 @@ diff -rub core/fmt/mod.rs core/fmt/mod.rs
      fn pad_formatted_parts(&mut self, formatted: &flt2dec::Formatted) -> Result {
          if let Some(mut width) = self.width {
              // for the sign-aware zero padding, we render the sign first and
-@@ -1049,6 +1051,7 @@
+@@ -1044,6 +1046,7 @@
          }
      }
  
@@ -49,7 +49,7 @@ diff -rub core/fmt/mod.rs core/fmt/mod.rs
      fn write_formatted_parts(&mut self, formatted: &flt2dec::Formatted) -> Result {
          fn write_bytes(buf: &mut Write, s: &[u8]) -> Result {
              buf.write_str(unsafe { str::from_utf8_unchecked(s) })
-@@ -1437,6 +1440,7 @@
+@@ -1432,6 +1435,7 @@
      }
  }
  
@@ -57,7 +57,7 @@ diff -rub core/fmt/mod.rs core/fmt/mod.rs
  // Common code of floating point Debug and Display.
  fn float_to_decimal_common<T>(fmt: &mut Formatter, num: &T, negative_zero: bool) -> Result
      where T: flt2dec::DecodableFloat
-@@ -1461,6 +1465,7 @@
+@@ -1456,6 +1460,7 @@
      fmt.pad_formatted_parts(&formatted)
  }
  
@@ -65,7 +65,7 @@ diff -rub core/fmt/mod.rs core/fmt/mod.rs
  // Common code of floating point LowerExp and UpperExp.
  fn float_to_exponential_common<T>(fmt: &mut Formatter, num: &T, upper: bool) -> Result
      where T: flt2dec::DecodableFloat
-@@ -1514,7 +1519,9 @@
+@@ -1509,7 +1514,9 @@
          }
      }
  } }
@@ -96,13 +96,13 @@ diff -rub core/intrinsics.rs core/intrinsics.rs
 +}
  
 +extern "rust-intrinsic" {
-     /// Returns the number of bits set in a `u8`.
-     #[cfg(stage0)]
-     pub fn ctpop8(x: u8) -> u8;
+     /// Returns the number of bits set in an integer type `T`
+     pub fn ctpop<T>(x: T) -> T;
+
 diff -rub core/lib.rs core/lib.rs
 --- core/lib.rs	2015-11-21 09:11:27.092351981 -0600
 +++ core/lib.rs	2015-11-21 09:29:55.465727520 -0600
-@@ -117,7 +117,9 @@
+@@ -101,7 +101,9 @@
  #[path = "num/u32.rs"]  pub mod u32;
  #[path = "num/u64.rs"]  pub mod u64;
  
@@ -112,14 +112,6 @@ diff -rub core/lib.rs core/lib.rs
  #[path = "num/f64.rs"]   pub mod f64;
  
  #[macro_use]
-@@ -161,6 +163,7 @@
- #[path = "simd_old.rs"]
- pub mod simd;
- #[cfg(not(stage0))]
-+#[cfg(not(feature = "disable_float"))]
- pub mod simd;
- 
- pub mod slice;
 diff -rub core/num/flt2dec/decoder.rs core/num/flt2dec/decoder.rs
 --- core/num/flt2dec/decoder.rs	2015-11-14 10:05:48.472026926 -0600
 +++ core/num/flt2dec/decoder.rs	2015-11-21 09:29:55.469060855 -0600
@@ -164,16 +156,16 @@ diff -rub core/num/mod.rs core/num/mod.rs
 +#[cfg(not(feature = "disable_float"))]
  zero_one_impl_float! { f32 f64 }
  
- // Just for stage0; a byte swap on a byte is a no-op
-@@ -1746,6 +1749,7 @@
+ macro_rules! checked_op {
+@@ -1585,6 +1588,7 @@
  #[unstable(feature = "core_float",
             reason = "stable interface is via `impl f{32,64}` in later crates",
             issue = "27702")]
 +#[cfg(not(feature = "disable_float"))]
  pub trait Float: Sized {
      /// Returns the NaN value.
-     fn nan() -> Self;
-@@ -1951,6 +1955,7 @@
+     #[unstable(feature = "float_extras", reason = "needs removal",
+@@ -1818,6 +1822,7 @@
  }
  
  #[stable(feature = "rust1", since = "1.0.0")]
@@ -181,7 +173,7 @@ diff -rub core/num/mod.rs core/num/mod.rs
  pub use num::dec2flt::ParseFloatError;
  
  // Conversion traits for primitive integer and float types
-@@ -1998,6 +2003,8 @@
+@@ -1865,6 +1870,8 @@
  // they fit in the significand, which is 24 bits in f32 and 53 bits in f64.
  // Lossy float conversions are not implemented at this time.
  
@@ -190,7 +182,7 @@ diff -rub core/num/mod.rs core/num/mod.rs
  // Signed -> Float
  impl_from! { i8, f32 }
  impl_from! { i8, f64 }
-@@ -2014,3 +2021,4 @@
+@@ -1881,3 +1888,4 @@
  
  // Float -> Float
  impl_from! { f32, f64 }
@@ -239,15 +231,15 @@ diff -rub core/ops.rs core/ops.rs
  div_impl_float! { f32 f64 }
  
  /// The `Rem` trait is used to specify the functionality of `%`.
-@@ -457,6 +464,7 @@
+@@ -455,6 +462,7 @@
+     )*)
  }
  
- #[cfg(not(stage0))]
 +#[cfg(not(feature = "disable_float"))]
  rem_impl_float! { f32 f64 }
  
- #[stable(feature = "rust1", since = "1.0.0")]
-@@ -564,7 +572,9 @@
+ /// The `Neg` trait is used to specify the functionality of unary `-`.
+@@ -523,7 +531,9 @@
  }
  
  // neg_impl_unsigned! { usize u8 u16 u32 u64 }
@@ -258,10 +250,10 @@ diff -rub core/ops.rs core/ops.rs
  
  /// The `Not` trait is used to specify the functionality of unary `!`.
  ///
-@@ -974,7 +984,9 @@
+@@ -930,7 +940,9 @@
+     )+)
  }
  
- #[cfg(not(stage0))]
 -add_assign_impl! { usize u8 u16 u32 u64 isize i8 i16 i32 i64 f32 f64 }
 +add_assign_impl! { usize u8 u16 u32 u64 isize i8 i16 i32 i64 }
 +#[cfg(not(feature = "disable_float"))]
@@ -269,10 +261,10 @@ diff -rub core/ops.rs core/ops.rs
  
  /// The `SubAssign` trait is used to specify the functionality of `-=`.
  ///
-@@ -1024,7 +1036,9 @@
+@@ -977,7 +989,9 @@
+     )+)
  }
  
- #[cfg(not(stage0))]
 -sub_assign_impl! { usize u8 u16 u32 u64 isize i8 i16 i32 i64 f32 f64 }
 +sub_assign_impl! { usize u8 u16 u32 u64 isize i8 i16 i32 i64 }
 +#[cfg(not(feature = "disable_float"))]
@@ -280,10 +272,10 @@ diff -rub core/ops.rs core/ops.rs
  
  /// The `MulAssign` trait is used to specify the functionality of `*=`.
  ///
-@@ -1074,7 +1088,9 @@
+@@ -1024,7 +1038,9 @@
+     )+)
  }
  
- #[cfg(not(stage0))]
 -mul_assign_impl! { usize u8 u16 u32 u64 isize i8 i16 i32 i64 f32 f64 }
 +mul_assign_impl! { usize u8 u16 u32 u64 isize i8 i16 i32 i64 }
 +#[cfg(not(feature = "disable_float"))]
@@ -291,10 +283,10 @@ diff -rub core/ops.rs core/ops.rs
  
  /// The `DivAssign` trait is used to specify the functionality of `/=`.
  ///
-@@ -1124,7 +1140,9 @@
+@@ -1071,7 +1087,9 @@
+     )+)
  }
  
- #[cfg(not(stage0))]
 -div_assign_impl! { usize u8 u16 u32 u64 isize i8 i16 i32 i64 f32 f64 }
 +div_assign_impl! { usize u8 u16 u32 u64 isize i8 i16 i32 i64 }
 +#[cfg(not(feature = "disable_float"))]
@@ -302,10 +294,10 @@ diff -rub core/ops.rs core/ops.rs
  
  /// The `RemAssign` trait is used to specify the functionality of `%=`.
  ///
-@@ -1174,7 +1192,9 @@
+@@ -1118,7 +1136,9 @@
+     )+)
  }
  
- #[cfg(not(stage0))]
 -rem_assign_impl! { usize u8 u16 u32 u64 isize i8 i16 i32 i64 f32 f64 }
 +rem_assign_impl! { usize u8 u16 u32 u64 isize i8 i16 i32 i64 }
 +#[cfg(not(feature = "disable_float"))]
