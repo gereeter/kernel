@@ -1,4 +1,4 @@
-#![feature(asm, core_slice_ext, lang_items, no_std)]
+#![feature(asm, lang_items)]
 
 #![no_std]
 
