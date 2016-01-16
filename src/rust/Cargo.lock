@@ -3,8 +3,8 @@ name = "kernel"
 version = "0.1.0"
 dependencies = [
  "core 0.1.0",
- "rlibc 0.1.4",
- "typenum 1.0.2",
+ "rlibc 0.1.5",
+ "typenum 1.2.0",
 ]
 
 [[package]]
@@ -13,14 +13,14 @@ version = "0.1.0"
 
 [[package]]
 name = "rlibc"
-version = "0.1.4"
+version = "0.1.5"
 dependencies = [
  "core 0.1.0",
 ]
 
 [[package]]
 name = "typenum"
-version = "1.0.2"
+version = "1.2.0"
 dependencies = [
  "core 0.1.0",
 ]
