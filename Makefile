@@ -35,7 +35,7 @@ bin/boot64.a: src/rust/target/x86_64-unknown-none-gnu/debug/libkernel.a bin/.dir
 	cp $< $@
 
 src/rust/target/x86_64-unknown-none-gnu/debug/libkernel.a: src/rust/src/kernel.rs src/rust/src/port.rs src/rust/src/gdt.rs lib/patched/core/.patch_applied
-	cargo build --target x86_64-unknown-none-gnu --manifest-path src/rust/Cargo.toml
+	cargo build --target x86_64-unknown-none-gnu --manifest-path src/rust/Cargo.toml --verbose
 
 lib/patched/core/.dir_created: lib/patched/.dir_created
 	cp -r submodules/rust/src/libcore/ lib/patched/core
